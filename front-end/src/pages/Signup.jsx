@@ -1,15 +1,31 @@
 import React, { useState } from 'react'
 import {useForm} from 'react-hook-form'
-import {NavLink} from 'react-router-dom'
-import '../styles/signup.css'
+import {NavLink, useNavigate} from 'react-router-dom'
+import {useDispatch, useSelector} from 'react-redux'
 import { handleSignup } from '../services/user'
+import {setCredentials} from '../store/authSlice.js'
+import '../styles/signup.css'
 
 const Signup = () => {
 
+  const [exist,setExist] = useState(false);
+
+  const dispatch = useDispatch()
+
+  const navigate = useNavigate()
+
   const {register,handleSubmit,watch, formState:{errors}} = useForm();
 
-  const onSubmit = (data) => {
-    handleSignup(data)
+  const { userInfo } = useSelector((state) => state.auth);
+
+  const onSubmit = async(data) => {
+    let user = await handleSignup(data)
+    if(typeof user === 'string'){
+      setExist(true)
+      return;
+    }
+    dispatch(setCredentials({ ...user }));
+    navigate('/')
   }
 
   return (
@@ -96,7 +112,9 @@ const Signup = () => {
             Create Account
           </button>
         </form>
-
+        <div className='text-center mt-4' >
+          {exist && <p className='text-red-500 text-sm mt-1'> User Already Exist with same E-mail <br />Please try again with another one!</p>}
+        </div>
         <p className="mt-8 text-center text-sm text-gray-600">
           Already have an account?{' '}
           <NavLink to="/login" className="font-medium text-blue-600 hover:text-blue-700 transition-colors">

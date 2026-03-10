@@ -15,6 +15,7 @@ const handleSignup = async (data) => {
     try {
         const response = await api.post('/user/signup',data);
         console.log("sign up data",response.data);
+        return response.data
     } catch (error) {
         console.log("Error",error.response?.data || error.message);
     }
