@@ -1,0 +1,12 @@
+/* src/styles/login.css */
+
+.login-card {
+  /* High-end distinct shadow for depth, combining a larger ambient shadow and a crisp bottom drop shadow */
+  box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.08), 0 4px 12px -4px rgba(0, 0, 0, 0.04);
+}
+
+.login-container {
+  /* Subtle dotted mesh background */
+  background-image: radial-gradient(#d1d5db 1px, transparent 1px);
+  background-size: 24px 24px;
+}
