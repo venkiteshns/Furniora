@@ -15,7 +15,7 @@ app.use('/',router)
 
 app.use((err,req,res,next) => {
     if(err) {
-        console.log("server error occoured");
+        console.log("server error occoured",err);
     }
 })
 

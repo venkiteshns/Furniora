@@ -2,13 +2,14 @@ import React, { useState } from 'react'
 import {useForm} from 'react-hook-form'
 import {NavLink} from 'react-router-dom'
 import '../styles/signup.css'
+import { handleSignup } from '../services/user'
 
 const Signup = () => {
 
   const {register,handleSubmit,watch, formState:{errors}} = useForm();
 
   const onSubmit = (data) => {
-    console.log("form data",data);
+    handleSignup(data)
   }
 
   return (

@@ -1,13 +1,15 @@
 import React from 'react'
 import {useForm} from 'react-hook-form'
+import { handleLogin } from '../services/user'
 import '../styles/login.css'
+import { NavLink } from 'react-router-dom'
 
 const Login = () => {
 
   const {register, handleSubmit, formState:{errors}} = useForm()
 
   const onSubmit = (data) => {
-    console.log("login data" , data);
+    handleLogin(data)
   }
 
   return (
@@ -62,9 +64,9 @@ const Login = () => {
 
         <p className="mt-8 text-center text-sm text-gray-600">
           Don't have an account?{' '}
-          <a href="/signup" className="font-medium text-blue-600 hover:text-blue-700 transition-colors">
+           <NavLink to="/signup" className="font-medium text-blue-600 hover:text-blue-700 transition-colors">
             Create an account
-          </a>
+          </NavLink>
         </p>
       </div>
     </div>
