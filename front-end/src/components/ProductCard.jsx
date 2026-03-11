@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { use } from 'react';
 import '../styles/product.css';
+import {useSelector} from 'react-redux'
+import { addToCart } from '../services/product';
 
 const ProductCard = ({ product }) => {
+  
+  const {userInfo} = useSelector((state) => state.auth);
+
+  const handleCart = async (item) => {
+    await addToCart(item,userInfo.id)
+  }
   return (
     <div className="product-card">
       <div className="product-image-container">
@@ -16,8 +24,8 @@ const ProductCard = ({ product }) => {
         <h3 className="product-title">{product.name}</h3>
         <p className="product-description">{product.description}</p>
         <div className="product-footer">
-          <span className="product-price">${product.price.toFixed(2)}</span>
-          <button className="product-add-button" type="button">
+          <span className="product-price">₹{product.price.toFixed(2)}</span>
+          <button className="product-add-button" type="button" onClick={() => handleCart(product)} >
             Add to Cart
           </button>
         </div>

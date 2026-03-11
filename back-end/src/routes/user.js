@@ -1,17 +1,30 @@
 import express from "express";
-import { userSignup } from "../controllers/userController.js";
+import {
+  userLogin,
+  userLogout,
+  userSignup,
+} from "../controllers/userController.js";
+import {
+  addProduct,
+  addToCart,
+  getProducts,
+  getUserProducts,
+} from "../controllers/productContoller.js";
 
-const router = express.Router()
+const router = express.Router();
 
-router.get('/',(req,res)=>{
-    res.send("helooo")
-} )
+router.post("/user/login", userLogin);
 
-router.post('/user/login',(req,res) => {
-    console.log("login data",req.body);
-    res.json({data:"received"})
-})
+router.post("/user/signup", userSignup);
 
-router.post('/user/signup',userSignup)
+router.get("/user/logout", userLogout);
+
+router.get("/user/products", getProducts);
+
+router.get("/user/products/:id", getUserProducts);
+
+router.post("/user/add-product", addProduct);
+
+router.post("/user/add_to_cart/:id", addToCart);
 
 export default router;

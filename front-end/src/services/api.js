@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
     baseURL: '/',
+    withCredentials:true
 });
 
 // // Request interceptor to add JWT token from localStorage/Redux to headers

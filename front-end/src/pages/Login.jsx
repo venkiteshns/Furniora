@@ -1,15 +1,37 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {useForm} from 'react-hook-form'
 import { handleLogin } from '../services/user'
 import '../styles/login.css'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
+import { useDispatch, useSelector } from 'react-redux'
+import { setCredentials } from '../store/authSlice'
 
 const Login = () => {
 
   const {register, handleSubmit, formState:{errors}} = useForm()
+  const { userInfo } = useSelector((state) => state.auth);
+  const dispatch = useDispatch()
+  const [exist, setExist] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const onSubmit = (data) => {
-    handleLogin(data)
+  const navigate = useNavigate()
+
+  const onSubmit = async (data) => {
+    const user = await handleLogin(data);
+    console.log(user);
+    if(!user.found){
+      setExist("Couldn't find an account with this email. Please try again!");
+      return;
+    }else if(!user.isValid){
+      setExist("Password seems to be incorrect . Please try again!");
+      return;
+    }
+    setExist(null)
+    if(!userInfo){
+      dispatch(setCredentials({ ...user.user }));
+    }
+    navigate('/',{ replace: true })
   }
 
   return (
@@ -44,13 +66,26 @@ const Login = () => {
                 Password
               </label>
             </div>
-            <input
-              type="password"
-              id="password"
-              {...register("password",{required:{value:true,message:"Password is required"}})}
-              placeholder="••••••••"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all placeholder-gray-400 text-gray-900"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                {...register("password",{required:{value:true,message:"Password is required"}})}
+                placeholder="••••••••"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all placeholder-gray-400 text-gray-900 pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
+              >
+                {showPassword ? (
+                  <AiOutlineEyeInvisible className="h-5 w-5" />
+                ) : (
+                  <AiOutlineEye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
             {errors.password?.message && <p className='text-red-500 text-sm mt-1' >{errors.password.message}</p>}
           </div>
 
@@ -61,7 +96,9 @@ const Login = () => {
             Sign In
           </button>
         </form>
-
+        <div className='text-center mt-4' >
+          {exist && <p className='text-red-500 text-sm mt-1'>{exist}</p>}
+        </div>
         <p className="mt-8 text-center text-sm text-gray-600">
           Don't have an account?{' '}
            <NavLink to="/signup" className="font-medium text-blue-600 hover:text-blue-700 transition-colors">
