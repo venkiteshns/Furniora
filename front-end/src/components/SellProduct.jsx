@@ -1,18 +1,33 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import {useSelector} from 'react-redux'
+import {useNavigate} from 'react-router-dom'
 import { handleSell } from "../services/product";
 
 const SellProduct = () => {
   const {userInfo} = useSelector((state) => state.auth)
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm();
 
+  const imageUrl = watch("imageUrl");
+  const [imageError, setImageError] = React.useState(false);
+
+  React.useEffect(() => {
+    setImageError(false);
+  }, [imageUrl]);
   const onSubmit = async(data) => {
     let response = await handleSell(data,userInfo.id)
+    if(response?.error){
+      return alert("Error occouRed while adding new product. Please try again")
+    }
+    alert("Product Listed for sale !")
+    return navigate('/')
   };
 
   return (
@@ -112,7 +127,7 @@ const SellProduct = () => {
               required: "Image URL is required",
               pattern: {
                 value:
-                  /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))|(data:image\/[a-zA-Z]+;base64,[^\s]+)$/i,
+                  /^(https?:\/\/.+)|(data:image\/[a-zA-Z]+;base64,[^\s]+)$/i,
                 message: "Enter a valid image URL or base64 image data",
               },
             })}
@@ -123,6 +138,21 @@ const SellProduct = () => {
             <p className="text-red-500 text-sm mt-1">
               {errors.imageUrl.message}
             </p>
+          )}
+
+          {imageUrl && (
+            <div className="w-full aspect-square border rounded-lg mt-4 flex items-center justify-center overflow-hidden bg-gray-50">
+              {imageError ? (
+                <span className="text-gray-500">Unable to load image preview</span>
+              ) : (
+                <img
+                  src={imageUrl}
+                  alt="Product Preview"
+                  className="w-full h-full object-contain"
+                  onError={() => setImageError(true)}
+                />
+              )}
+            </div>
           )}
         </div>
 

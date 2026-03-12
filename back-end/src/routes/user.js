@@ -7,8 +7,11 @@ import {
 import {
   addProduct,
   addToCart,
+  getCartProducts,
   getProducts,
   getUserProducts,
+  handleDeleteProduct,
+  handleEditProduct,
 } from "../controllers/productContoller.js";
 
 const router = express.Router();
@@ -23,8 +26,14 @@ router.get("/user/products", getProducts);
 
 router.get("/user/products/:id", getUserProducts);
 
-router.post("/user/add-product", addProduct);
+router.post("/user/add_product", addProduct);
 
 router.post("/user/add_to_cart/:id", addToCart);
+
+router.post('/user/edit_product', handleEditProduct)
+
+router.get("/user/cart_products/:id",getCartProducts);
+
+router.post('/user/delete_product/', handleDeleteProduct)
 
 export default router;

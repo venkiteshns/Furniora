@@ -1,46 +1,49 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import {useSelector} from 'react-redux'
+import { getCartProducts, removeProduct } from '../services/product';
+import { NavLink } from 'react-router-dom';
 
 const Cart = () => {
-  // Dummy product data as state
-  const [dummyItems, setDummyItems] = useState([
-    {
-      id: 1,
-      name: 'Modern Gray Sofa',
-      price: 499.99,
-      image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=200'
-    },
-    {
-      id: 2,
-      name: 'Oak Coffee Table',
-      price: 149.50,
-      image: 'https://images.unsplash.com/photo-1532372320572-cda25653a26d?auto=format&fit=crop&q=80&w=200'
-    },
-    {
-      id: 3,
-      name: 'Ergonomic Desk Chair',
-      price: 199.00,
-      image: 'https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?auto=format&fit=crop&q=80&w=200'
+
+  const [products,setProducts] = useState([])
+  
+  const {userInfo} = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    const listCartProducts = async () => {
+      let products = await getCartProducts(userInfo.id)
+      setProducts(products)
     }
-  ]);
 
-  const handleRemove = (id) => {
-    setDummyItems(prevItems => prevItems.filter(item => item.id !== id));
-  };
+    listCartProducts();
+  },[])
 
+  async function handleRemove (id) {
+    try {
+      let status = await removeProduct(id,userInfo.id)
+      if(status?.acknowledged && status?.deletedCount === 1){
+        return alert("Product removed from cart")
+      }
+      throw new Error(status?.error)
+    } catch (error) {
+      return alert(error.message)
+    }
+  }
+  
   // Calculate total price
-  const totalPrice = dummyItems.reduce((total, item) => total + item.price, 0);
+  const totalPrice = products.reduce((total, item) => total + item.price, 0);
 
-  return (
+  return products.length > 0 ? (
     <div className="max-w-4xl mx-auto p-6 md:p-8 bg-white shadow-xl rounded-xl mt-10 mb-10">
       <h2 className="text-3xl font-bold mb-8 text-gray-800 border-b pb-4">Shopping Cart</h2>
 
       {/* List of Cart Items */}
       <div className="flex flex-col space-y-6">
-        {dummyItems.map((item) => (
-          <div key={item.id} className="relative flex flex-col sm:flex-row items-center justify-between p-5 border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 bg-gray-50">
+        {products.map((item) => (
+          <div key={item._id} className="relative flex flex-col sm:flex-row items-center justify-between p-5 border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 bg-gray-50">
             {/* Delete Icon */}
             <button 
-              onClick={() => handleRemove(item.id)}
+              onClick={() => confirm("areyousure") && handleRemove(item._id)}
               className="absolute top-3 right-3 p-2 rounded-full text-red-500 hover:bg-red-50 hover:text-red-600 cursor-pointer transition-colors duration-200 focus:outline-none"
               title="Remove Item"
             >
@@ -88,6 +91,26 @@ const Cart = () => {
           Checkout Now
         </button>
       </div>
+    </div>
+  ) : (
+    <div className="flex flex-col items-center justify-center py-16 px-4 md:px-8 max-w-4xl mx-auto bg-white shadow-xl rounded-xl mt-10 mb-10">
+      <div className="bg-gray-50 p-6 rounded-full mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-16 h-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+        </svg>
+      </div>
+      <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 text-center">Your Cart is Currently Empty</h2>
+      <p className="text-gray-500 text-lg mb-8 max-w-md text-center">
+        It looks like you haven't added any products to your cart yet. Browse our catalog to find items that suit your needs.
+      </p>
+      <NavLink to={'/'} >
+      <button 
+        type="button"
+        className="px-8 py-3 bg-blue-600 text-white font-semibold text-lg rounded-lg hover:bg-blue-700 transition duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300"
+      >
+        Browse Products
+      </button>
+      </NavLink>
     </div>
   );
 };

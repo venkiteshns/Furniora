@@ -39,7 +39,6 @@ const Header = () => {
             className="header-icon-button"
             style={{ width: "auto", padding: "0 1rem", gap: "0.25rem" }}
             aria-label="Sell"
-            onClick={() => (window.location.href = "/sell")}
           >
             <Tag size={20} />
             <span className="font-medium text-sm">Sell</span>

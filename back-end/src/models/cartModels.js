@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const productSchema = new mongoose.Schema(
+const cartSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -20,20 +20,25 @@ const productSchema = new mongoose.Schema(
     },
 
     image: {
-      type: String,
+      type: String, 
       required: true
+    },
+
+    isSold: {
+      type: Boolean,
+      default: false
     },
 
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      default: null
+      ref: "Seller",
+      required: true
     },
 
-    isSold:{
-      type:Boolean,
-      required: true,
-      default:false
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
     }
   },
   {
@@ -41,6 +46,6 @@ const productSchema = new mongoose.Schema(
   }
 );
 
-const Product = mongoose.model("Product", productSchema);
+const Cart = mongoose.model("Cart", cartSchema);
 
-export default Product;
+export default Cart;

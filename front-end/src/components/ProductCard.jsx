@@ -4,11 +4,15 @@ import {useSelector} from 'react-redux'
 import { addToCart } from '../services/product';
 
 const ProductCard = ({ product }) => {
-  
+
   const {userInfo} = useSelector((state) => state.auth);
 
   const handleCart = async (item) => {
-    await addToCart(item,userInfo.id)
+    let status = await addToCart(item,userInfo.id)
+    if(status?.error){
+      return alert("item is already in cart")
+    }
+    alert("item added to cart")
   }
   return (
     <div className="product-card">
