@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import {useSelector} from 'react-redux'
-import { getCartProducts, removeProduct } from '../services/product';
+import { useSelector } from 'react-redux'
+import { getCartProducts, handleCheckout, removeProduct } from '../services/product';
 import { NavLink } from 'react-router-dom';
 
 const Cart = () => {
 
-  const [products,setProducts] = useState([])
-  
-  const {userInfo} = useSelector((state) => state.auth);
+  const [products, setProducts] = useState([])
+
+  const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const listCartProducts = async () => {
       let products = await getCartProducts(userInfo.id)
-      setProducts(products)
+      setProducts([...products])
     }
 
     listCartProducts();
-  },[])
+  }, [])
 
-  async function handleRemove (id) {
+  async function handleRemove(id) {
     try {
-      let status = await removeProduct(id,userInfo.id)
-      if(status?.acknowledged && status?.deletedCount === 1){
+      let status = await removeProduct(id, userInfo.id)
+      if (status?.acknowledged && status?.deletedCount === 1) {
         return alert("Product removed from cart")
       }
       throw new Error(status?.error)
@@ -29,9 +29,23 @@ const Cart = () => {
       return alert(error.message)
     }
   }
-  
+
+  const checkOut = async () => {
+    let product = products.reduce((acc,item,index) => {
+      acc[index] = item._id;
+      return acc;
+    },[])
+    let payload = {
+      product,
+      userId:userInfo.id
+    }
+    console.log(payload);
+    
+    let response = await handleCheckout(payload)
+  }
+
   // Calculate total price
-  const totalPrice = products.reduce((total, item) => total + item.price, 0);
+    const totalPrice = products.reduce((total, item) => total + item.price, 0);
 
   return products.length > 0 ? (
     <div className="max-w-4xl mx-auto p-6 md:p-8 bg-white shadow-xl rounded-xl mt-10 mb-10">
@@ -42,7 +56,7 @@ const Cart = () => {
         {products.map((item) => (
           <div key={item._id} className="relative flex flex-col sm:flex-row items-center justify-between p-5 border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 bg-gray-50">
             {/* Delete Icon */}
-            <button 
+            <button
               onClick={() => confirm("areyousure") && handleRemove(item._id)}
               className="absolute top-3 right-3 p-2 rounded-full text-red-500 hover:bg-red-50 hover:text-red-600 cursor-pointer transition-colors duration-200 focus:outline-none"
               title="Remove Item"
@@ -81,12 +95,13 @@ const Cart = () => {
       <div className="mt-10 border-t-2 border-gray-100 pt-8 flex flex-col items-end">
         <div className="flex justify-between w-full sm:w-2/3 md:w-1/2 lg:w-1/3 mb-6 bg-gray-50 p-4 rounded-lg">
           <span className="text-xl font-bold text-gray-700">Total Price:</span>
-          <span className="text-2xl font-black text-blue-600">₹{totalPrice.toFixed(2)}</span>
+          <span className="text-2xl font-black text-gray-900">₹{totalPrice.toFixed(2)}</span>
         </div>
 
         <button
           type="button"
-          className="w-full sm:w-auto px-10 py-4 bg-blue-600 text-white font-bold text-lg rounded-lg hover:bg-blue-700 transition duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300"
+          className="w-full sm:w-auto px-10 py-4 bg-gray-900 text-white font-bold text-lg rounded-lg hover:bg-gray-800 transition duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300"
+          onClick={checkOut}
         >
           Checkout Now
         </button>
@@ -104,12 +119,12 @@ const Cart = () => {
         It looks like you haven't added any products to your cart yet. Browse our catalog to find items that suit your needs.
       </p>
       <NavLink to={'/'} >
-      <button 
-        type="button"
-        className="px-8 py-3 bg-blue-600 text-white font-semibold text-lg rounded-lg hover:bg-blue-700 transition duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300"
-      >
-        Browse Products
-      </button>
+        <button
+          type="button"
+          className="px-8 py-3 bg-gray-900 text-white font-semibold text-lg rounded-lg hover:bg-gray-800 transition duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300"
+        >
+          Browse Products
+        </button>
       </NavLink>
     </div>
   );

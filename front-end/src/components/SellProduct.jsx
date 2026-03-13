@@ -1,11 +1,11 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import {useSelector} from 'react-redux'
-import {useNavigate} from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { handleSell } from "../services/product";
 
 const SellProduct = () => {
-  const {userInfo} = useSelector((state) => state.auth)
+  const { userInfo } = useSelector((state) => state.auth)
   const navigate = useNavigate();
 
   const {
@@ -21,9 +21,9 @@ const SellProduct = () => {
   React.useEffect(() => {
     setImageError(false);
   }, [imageUrl]);
-  const onSubmit = async(data) => {
-    let response = await handleSell(data,userInfo.id)
-    if(response?.error){
+  const onSubmit = async (data) => {
+    let response = await handleSell(data, userInfo.id)
+    if (response?.error) {
       return alert("Error occouRed while adding new product. Please try again")
     }
     alert("Product Listed for sale !")
@@ -55,7 +55,7 @@ const SellProduct = () => {
                 !/^\d+$/.test(value) ||
                 "Product name cannot contain only numbers",
             })}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 outline-none"
             placeholder="e.g. Vintage Leather Sofa"
           />
           {errors.productName && (
@@ -82,7 +82,7 @@ const SellProduct = () => {
                 !/^\d+$/.test(value) ||
                 "Description cannot contain only numbers",
             })}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 outline-none"
             placeholder="Describe your product..."
           />
           {errors.productDescription && (
@@ -106,7 +106,7 @@ const SellProduct = () => {
                 message: "Price must be greater than 0",
               },
             })}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 outline-none"
             placeholder="Enter price"
           />
           {errors.productPrice && (
@@ -131,7 +131,7 @@ const SellProduct = () => {
                 message: "Enter a valid image URL or base64 image data",
               },
             })}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 outline-none"
             placeholder="https://example.com/product.jpg"
           />
           {errors.imageUrl && (
@@ -160,7 +160,7 @@ const SellProduct = () => {
         <div className="pt-6">
           <button
             type="submit"
-            className="w-full py-4 rounded-xl text-lg font-bold text-white bg-blue-600 hover:bg-blue-700"
+            className="w-full py-4 rounded-xl text-lg font-bold text-white bg-gray-900 hover:bg-gray-800 transition-colors"
           >
             List Product
           </button>

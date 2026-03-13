@@ -6,6 +6,8 @@ import {
   getProductsDetails,
   getUserCart,
   getUserListedProducts,
+  markCheckout,
+  markProductAsSold,
 } from "../services/productServices.js";
 
 const getProducts = async (req, res) => {
@@ -68,6 +70,15 @@ const handleDeleteProduct = async (req, res) => {
   }
 };
 
+const handleSoldProduct = async (req,res) => {
+  let response = await markProductAsSold(req.params.id)
+  res.send(response)
+}
+
+const handleCheckout = async (req,res) => {
+  let response = await markCheckout(req.body)
+}
+
 export {
   getProducts,
   addProduct,
@@ -76,4 +87,6 @@ export {
   getCartProducts,
   handleEditProduct,
   handleDeleteProduct,
+  handleSoldProduct,
+  handleCheckout
 };

@@ -5,45 +5,50 @@ const cartSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
 
     price: {
       type: Number,
       required: true,
-      min: 0
+      min: 0,
     },
 
     description: {
       type: String,
-      required: true
+      required: true,
     },
 
     image: {
-      type: String, 
-      required: true
+      type: String,
+      required: true,
     },
 
     isSold: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Seller",
-      required: true
+      required: true,
     },
 
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true
+      required: true,
+    },
+    boughtBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     }
   },
   {
-    timestamps: true
-  }
+    timestamps: true,
+  },
 );
 
 const Cart = mongoose.model("Cart", cartSchema);

@@ -13,11 +13,11 @@ const startServer = async () => {
     await dbConnect();
     app.listen(PORT, (err) => {
       if (err) {
-        return console.log("Server start error");
+        return console.log("Server start error",err);
       }
       console.log("Server running on port :", PORT);
     });
-  } catch (err) {
+  } catch (error) {
     console.log("Error while starting server", error);
     process.exit(1);
   }

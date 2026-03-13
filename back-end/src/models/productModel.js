@@ -34,6 +34,11 @@ const productSchema = new mongoose.Schema(
       type:Boolean,
       required: true,
       default:false
+    },
+     boughtBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null
     }
   },
   {

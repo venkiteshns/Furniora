@@ -67,3 +67,34 @@ export const deleteProduct = async ({ _id, userId }) => {
     return error.message;
   }
 };
+
+export const markProductAsSold = async (_id) => {
+  let response = await Product.updateOne({ _id }, { $set: { isSold: true } });
+  return response;
+};
+
+export const markCheckout = async ({ product, userId }) => {
+  try {
+    let res = await Promise.all(
+      product.map(async (item) => {
+        const productUpdate = await Product.updateOne(
+          { _id: item },
+          { $set: { boughtBy: userId, isSold: true } },
+        );
+
+        const cartUpdate = await Cart.updateOne(
+          { _id: item, userId },
+          { $set: { isSold: true, boughtBy: userId } },
+        );
+
+        return {
+          productUpdate,
+          cartUpdate,
+        };
+      }),
+    );
+    console.log(res);
+  } catch (error) {
+    console.log("errrr..............", error.message);
+  }
+};
