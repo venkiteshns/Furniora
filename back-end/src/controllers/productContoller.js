@@ -76,7 +76,17 @@ const handleSoldProduct = async (req,res) => {
 }
 
 const handleCheckout = async (req,res) => {
-  let response = await markCheckout(req.body)
+  try {
+    
+    let response = await markCheckout(req.body)
+    res.json({
+      status:"success"
+    })
+  } catch (error) {
+    res.json({
+      status:"failed"
+    })
+  }
 }
 
 export {

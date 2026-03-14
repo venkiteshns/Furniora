@@ -9,6 +9,8 @@ import UserProfile from "./components/UserProfile";
 import SellProduct from './components/SellProduct'
 import Header from "./components/Header";
 import Cart from "./components/Cart";
+import CheckoutSuccess from "./pages/CheckoutSuccess";
+import CheckoutError from "./pages/CheckoutError";
 
 function App() {
   return (
@@ -23,11 +25,13 @@ function App() {
           </Route>
 
           {/* Protected routes */}
-          <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Home />} />
+          <Route element={<ProtectedRoute />}>
             <Route path="/profile" element={<UserProfile/>} />
             <Route path="/cart" element={<Cart/>} />
             <Route path="/sell" element={<SellProduct/>} />
+            <Route path="/checkout/success" element={<CheckoutSuccess/>} />
+            <Route path="/checkout/error" element={<CheckoutError/>} />
           </Route>
 
         </Routes>

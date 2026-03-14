@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { handleSell } from "../services/product";
+import { showSuccess, showError } from "../utils/alertService";
 
 const SellProduct = () => {
   const { userInfo } = useSelector((state) => state.auth)
@@ -18,15 +19,16 @@ const SellProduct = () => {
   const imageUrl = watch("imageUrl");
   const [imageError, setImageError] = React.useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setImageError(false);
   }, [imageUrl]);
+
   const onSubmit = async (data) => {
     let response = await handleSell(data, userInfo.id)
     if (response?.error) {
-      return alert("Error occouRed while adding new product. Please try again")
+      return showError("Error occouRed while adding new product. Please try again");
     }
-    alert("Product Listed for sale !")
+    showSuccess("Product Listed for sale !");
     return navigate('/')
   };
 
@@ -61,6 +63,41 @@ const SellProduct = () => {
           {errors.productName && (
             <p className="text-red-500 text-sm mt-1">
               {errors.productName.message}
+            </p>
+          )}
+        </div>
+
+        {/* Product Category */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Product Category
+          </label>
+          <select
+            defaultValue=""
+            {...register("category", {
+              required: "Product category is required",
+            })}
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 outline-none"
+          >
+            <option value="" disabled>
+              Select a category
+            </option>
+            <option value="Sofas & Couches">Sofas & Couches</option>
+            <option value="Beds & Mattresses">Beds & Mattresses</option>
+            <option value="Tables">Tables</option>
+            <option value="Chairs">Chairs</option>
+            <option value="Dining Sets">Dining Sets</option>
+            <option value="Wardrobes & Cabinets">Wardrobes & Cabinets</option>
+            <option value="TV Units & Entertainment Centers">TV Units & Entertainment Centers</option>
+            <option value="Desks & Office Furniture">Desks & Office Furniture</option>
+            <option value="Shelves & Bookcases">Shelves & Bookcases</option>
+            <option value="Outdoor & Garden Furniture">Outdoor & Garden Furniture</option>
+            <option value="Others">Others</option>
+
+          </select>
+          {errors.category && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.category.message}
             </p>
           )}
         </div>

@@ -15,6 +15,7 @@ export const addNewProduct = async (inputDetails) => {
       description: data.productDescription,
       price: data.productPrice,
       image: data.imageUrl,
+      category: data.category,
       isSold: false,
     };
     let product = await Product.insertOne(payload);
@@ -30,13 +31,16 @@ export const getUserListedProducts = async (sellerId) => {
 };
 
 export const addProductToCart = async (product, userId) => {
+  product.productId = product._id;
+  delete product._id;
   let payload = { ...product, userId };
   let insertedProduct = await Cart.insertOne(payload);
+  console.log(insertedProduct);
   return insertedProduct;
 };
 
 export const getUserCart = async (userId) => {
-  let products = await Cart.find({ userId });
+  let products = await Cart.find({ userId, isSold: false });
   return products;
 };
 
@@ -77,24 +81,39 @@ export const markCheckout = async ({ product, userId }) => {
   try {
     let res = await Promise.all(
       product.map(async (item) => {
+        console.log(item);
+
         const productUpdate = await Product.updateOne(
-          { _id: item },
+          { _id: item, isSold: false },
           { $set: { boughtBy: userId, isSold: true } },
         );
 
+        if (productUpdate.matchedCount === 0) {
+          throw new Error(
+            `Sorry for the inconvenience , Product has already sold !!`,
+          );
+        }
+
         const cartUpdate = await Cart.updateOne(
-          { _id: item, userId },
+          { productId: item, userId, isSold: false },
           { $set: { isSold: true, boughtBy: userId } },
         );
 
-        return {
-          productUpdate,
-          cartUpdate,
-        };
+        console.log("prod : ", cartUpdate.matchedCount);
+
+        if (cartUpdate.matchedCount === 0) {
+          console.warn(
+            `Sorry for the inconvenience , Product has already sold !!`,
+          );
+        }
+
+        return true;
       }),
     );
-    console.log(res);
+
+    return true;
   } catch (error) {
-    console.log("errrr..............", error.message);
+    console.log("errrr.............. cart check out :", error.message);
+    throw error.message;
   }
 };

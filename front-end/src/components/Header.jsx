@@ -2,8 +2,11 @@ import React from "react";
 import { ShoppingCart, User, Tag } from "lucide-react";
 import "../styles/header.css";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Header = () => {
+  const { cartItems } = useSelector((state) => state.cart);
+
   return (
     <header className="header-container">
       {/* Left side: Logo & Company Name */}
@@ -46,8 +49,31 @@ const Header = () => {
         </NavLink>
 
         <NavLink to={"/cart"}>
-          <button className="header-icon-button" aria-label="Cart">
+          <button className="header-icon-button relative" aria-label="Cart">
             <ShoppingCart size={20} />
+            {cartItems.length > 0 && (
+              <span
+                className="
+                absolute 
+                -top-1 
+                -right-2 
+                flex 
+                items-center 
+                justify-center 
+                min-w-[18px] 
+                h-[18px] 
+                px-[5px] 
+                text-[10px] 
+                font-semibold 
+                text-white 
+                bg-gray-900 
+                rounded-full
+                leading-none
+                "
+              >
+                {cartItems.length > 99 ? "99+" : cartItems.length}
+              </span>
+            )}
           </button>
         </NavLink>
 

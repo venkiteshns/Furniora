@@ -47,6 +47,7 @@ export const removeProduct = async (productId, userId) => {
   return response.data;
 };
 
+
 export const setProductAsSold = async (id) => {
   let response = await api.get(`/user/sold/${id}`);
   return response.data;
@@ -54,4 +55,5 @@ export const setProductAsSold = async (id) => {
 
 export const handleCheckout = async (payload) => {
   let response = await api.post("/user/checkout", payload);
+  return response.data.status === 'success' ? "success" :'failed';
 };

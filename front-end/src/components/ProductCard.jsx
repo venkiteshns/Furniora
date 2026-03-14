@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addToCart } from '../services/product';
 import ProductDetailsModal from './ProductDetailsModal';
 import { addItemToCart } from '../store/cartSlice';
+import { showSuccess, showError } from '../utils/alertService';
 
 const ProductCard = ({ product }) => {
 
@@ -15,11 +16,13 @@ const ProductCard = ({ product }) => {
 
   const handleCart = async (item) => {
     let status = await addToCart(item, userInfo.id)
-    dispatch(addItemToCart(item))
+    console.log(status);
+    
     if (status?.error) {
-      return alert("item is already in cart")
+      return showError("item is already in cart")
     }
-    alert("item added to cart")
+    dispatch(addItemToCart(status))
+    showSuccess("item added to cart")
   }
   const handleCardClick = () => {
     setIsModalOpen(true);
@@ -45,7 +48,7 @@ const ProductCard = ({ product }) => {
           
           <div className="mt-4 space-y-3 pt-4 border-t border-gray-50 mt-auto">
             <span className="text-lg font-semibold text-gray-900 block">
-              ₹{product.price.toFixed(2)}
+              ₹{product.price}
             </span>
             <button 
               className="w-full py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-medium transition-colors" 

@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import "../styles/dashboard.css";
-import { useEffect } from "react";
 import { getProducts } from "../services/product";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,6 +10,20 @@ const Dashboard = () => {
   const dispatch = useDispatch();
 
   const { products, status, error } = useSelector((state) => state.product);
+
+  const [categoryFilter, setCategoryFilter] = useState("All Categories");
+  const [priceFilter, setPriceFilter] = useState("");
+
+  const filteredProducts = products.filter((product) => {
+    const categoryMatch =
+      categoryFilter === "All Categories" ||
+      product.category === categoryFilter;
+
+    const priceMatch =
+      !priceFilter || product.price <= Number(priceFilter);
+
+    return categoryMatch && priceMatch;
+  });
 
   useEffect(() => {
 
@@ -115,14 +128,44 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       <main className="dashboard-main">
-        <div className="dashboard-header-section">
-          <h1 className="dashboard-title">Featured Collections</h1>
-          <p className="dashboard-subtitle">
-            Discover our premium range of modern furniture.
-          </p>
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+          <div className="dashboard-header-section" style={{ marginBottom: 0 }}>
+            <h1 className="dashboard-title">Featured Collections</h1>
+            <p className="dashboard-subtitle">
+              Discover our premium range of modern furniture.
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-4 py-2 shadow-sm">
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-gray-900 outline-none text-gray-700 bg-white"
+            >
+              <option value="All Categories">All Categories</option>
+              <option value="Sofas & Couches">Sofas & Couches</option>
+              <option value="Beds & Mattresses">Beds & Mattresses</option>
+              <option value="Tables">Tables</option>
+              <option value="Chairs">Chairs</option>
+              <option value="Dining Sets">Dining Sets</option>
+              <option value="Wardrobes & Cabinets">Wardrobes & Cabinets</option>
+              <option value="TV Units & Entertainment Centers">TV Units & Entertainment Centers</option>
+              <option value="Desks & Office Furniture">Desks & Office Furniture</option>
+              <option value="Shelves & Bookcases">Shelves & Bookcases</option>
+              <option value="Outdoor & Garden Furniture">Outdoor & Garden Furniture</option>
+            </select>
+            
+            <input
+              type="number"
+              placeholder="Max price"
+              value={priceFilter}
+              onChange={(e) => setPriceFilter(e.target.value)}
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-gray-900 outline-none w-32 text-gray-700 bg-white"
+            />
+          </div>
         </div>
 
-        {products.length === 0 ? (
+        {filteredProducts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-6 bg-white border border-gray-100 rounded-2xl shadow-sm my-8 text-center max-w-3xl mx-auto">
             <div className="bg-gray-50 p-6 rounded-full shadow-sm mb-6">
               <svg
@@ -155,7 +198,7 @@ const Dashboard = () => {
           </div>
         ) : (
           <div className="product-grid">
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
           </div>

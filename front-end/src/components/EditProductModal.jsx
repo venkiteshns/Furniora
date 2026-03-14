@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { getProducts, handleEditProduct } from "../services/product";
 import { useDispatch, useSelector } from "react-redux";
 import { editProductList, setProductList } from "../store/productSlice";
+import { editProduct } from "../store/userProductSlice";
+import { showSuccess, showError } from "../utils/alertService";
 
 const EditProductModal = ({ product, onClose }) => {
   const dispatch = useDispatch();
@@ -20,6 +22,7 @@ const EditProductModal = ({ product, onClose }) => {
       productDescription: product?.description || "",
       productPrice: product?.price || "",
       imageUrl: product?.image || "",
+      category: product?.category || "",
     },
   });
 
@@ -51,18 +54,20 @@ const EditProductModal = ({ product, onClose }) => {
       price: data.productPrice,
       description: data.productDescription,
       image: data.imageUrl,
+      category: data.category,
     };
     dispatch(editProductList(paylod));
+    dispatch(editProduct(paylod));
     try {
       let response = await handleEditProduct(data, product._id)
       if (response?.acknowledged && response?.modifiedCount === 1) {
-        alert("product updated successfully")
+        showSuccess("product updated successfully");
         onClose();
         return;
       }
-      throw ("Failed to update product , Please try after sometime!!")
+      throw new Error("Failed to update product , Please try after sometime!!");
     } catch (error) {
-      alert(error.message);
+      showError(error.message);
     }
   };
 
@@ -109,6 +114,37 @@ const EditProductModal = ({ product, onClose }) => {
             {errors.productName && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.productName.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Product Category
+            </label>
+            <select
+              {...register("category", {
+                required: "Category is required",
+              })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none transition-colors"
+            >
+              <option value="" disabled>
+                Select a category
+              </option>
+              <option value="Sofas & Couches">Sofas & Couches</option>
+              <option value="Beds & Mattresses">Beds & Mattresses</option>
+              <option value="Tables">Tables</option>
+              <option value="Chairs">Chairs</option>
+              <option value="Dining Sets">Dining Sets</option>
+              <option value="Wardrobes & Cabinets">Wardrobes & Cabinets</option>
+              <option value="TV Units & Entertainment Centers">TV Units & Entertainment Centers</option>
+              <option value="Desks & Office Furniture">Desks & Office Furniture</option>
+              <option value="Shelves & Bookcases">Shelves & Bookcases</option>
+              <option value="Outdoor & Garden Furniture">Outdoor & Garden Furniture</option>
+            </select>
+            {errors.category && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.category.message}
               </p>
             )}
           </div>

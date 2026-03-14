@@ -7,41 +7,38 @@ import { handleLogoutProfile } from "../services/user";
 import { getUserProducts, setProductAsSold } from "../services/product";
 import EditProductModal from "./EditProductModal";
 import { AlertCircle } from "lucide-react";
+import { markItemAsSold, setUserProducts, clearProducts} from "../store/userProductSlice";
+import { showSuccess, showConfirm } from "../utils/alertService";
+import { clearCartItems } from "../store/cartSlice";
 
 const UserProfile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [products, setProducts] = useState([]);
-  const [status, setStatus] = useState("idle");
+  const [status, setStatus] = useState("loading");
   const [error, setError] = useState(null);
   const [refresh, setRefresh] = useState(false);
-  const [user, setUser] = useState({});
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const {userInfo} = useSelector((state) => state.auth)
-  
-  useEffect(() => {
-    setStatus("loading");
-    setError(null);
+  const { userInfo } = useSelector((state) => state.auth);
+  const { userProducts } = useSelector((state) => state.userProducts);
 
+  useEffect(() => {
+    if (userProducts.length > 0) {
+      setStatus("success")
+      return
+    };
     const getProducts = async () => {
       try {
-        if (userInfo) {
-          setUser(userInfo)
-        }
         let productList = await getUserProducts(userInfo.id);
+        dispatch(setUserProducts(productList));
         setStatus("success");
-        setProducts(productList);
       } catch (error) {
         setError(error || "Failed to fetch products");
         setStatus("failed");
       }
     };
-
-    setTimeout(() => {
-      getProducts();
-    }, 300);
+    getProducts()
   }, [refresh]);
 
   const handleRefresh = () => {
@@ -49,12 +46,19 @@ const UserProfile = () => {
   };
 
   const markAsSold = async (product) => {
-    let status = await setProductAsSold(product._id);
-    alert("Product marked as sold");
+    const confirmed = await showConfirm("Are you sure to mark this product as sold ?");
+    if (confirmed) {
+      let status = await setProductAsSold(product._id);
+      dispatch(markItemAsSold(product._id));
+      showSuccess("Product marked as sold");
+    }
+    return;
   };
 
   const handleLogout = async () => {
     await handleLogoutProfile();
+    dispatch(clearProducts())
+    dispatch(clearCartItems())
     dispatch(logout());
     navigate("/login");
   };
@@ -64,20 +68,24 @@ const UserProfile = () => {
       {/* User Information Section */}
       <div className="user-info-card flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="user-avatar">{user?.name?.charAt(0)}</div>
+          <div className="user-avatar">{userInfo?.name?.charAt(0)}</div>
           <div className="user-details">
-            <h2 className="user-name">{user.name}</h2>
-            <p className="user-email">{user.email}</p>
+            <h2 className="user-name">{userInfo.name}</h2>
+            <p className="user-email">{userInfo.email}</p>
           </div>
         </div>
-        <button 
-          className="ml-auto inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors border border-red-100" 
-          onClick={() => handleLogout()}
+        <button
+          className="ml-auto inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors border border-red-100"
+          onClick={async () => {
+            if (await showConfirm("Are you sure to logout ?")) {
+              handleLogout()
+            }
+          }
+          }
         >
           Logout
         </button>
       </div>
-
       Listed Products Section
       <div className="listed-products-section">
         <h3 className="section-title">Products Listed for Sale</h3>
@@ -132,7 +140,7 @@ const UserProfile = () => {
                 >
                   Try Again
                 </button>
-                <NavLink to={'/'} className="w-full">
+                <NavLink to={"/"} className="w-full">
                   <button className="w-full inline-flex items-center justify-center px-6 py-2.5 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 hover:text-gray-900 text-gray-700 text-sm font-medium transition-all duration-200 shadow-sm active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-offset-2">
                     Back to Home
                   </button>
@@ -144,8 +152,8 @@ const UserProfile = () => {
 
         {status === "success" && (
           <div className="products-grid">
-            {products.length > 0 ? (
-              products.map((product) => (
+            {userProducts.length > 0 ? (
+              userProducts.map((product) => (
                 <div
                   key={product._id}
                   className={`profile-product-card relative ${product.isSold ? "opacity-60 grayscale" : ""}`}
@@ -165,7 +173,7 @@ const UserProfile = () => {
                   <div className="profile-product-content">
                     <h4 className="profile-product-title">{product.name}</h4>
                     <p className="profile-product-price">
-                      ₹{product.price.toFixed(2)}
+                      ₹{product.price}
                     </p>
 
                     <div className="profile-product-actions">
@@ -229,7 +237,6 @@ const UserProfile = () => {
           </div>
         )}
       </div>
-
       {selectedProduct && (
         <EditProductModal
           product={selectedProduct}
