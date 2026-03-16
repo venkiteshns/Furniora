@@ -18,6 +18,7 @@ const UserProfile = () => {
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState(null);
   const [refresh, setRefresh] = useState(false);
+
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const { userInfo } = useSelector((state) => state.auth);

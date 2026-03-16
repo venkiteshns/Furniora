@@ -20,7 +20,7 @@ const handleSignup = async (data) => {
 
 const handleLogoutProfile = async () => {
   try {
-    const response = await api.get("/user/logout");
+    const response = await api.post("/user/logout");
   } catch (error) {
     console.log("Error", error.response?.data || error.message);
   }

@@ -31,7 +31,7 @@ const Header = () => {
               <path d="M15 10v4" />
             </svg>
           </div>
-          <span className="header-logo-text">Furniora</span>
+          <span className="header-logo-text">The Royal Furnitures</span>
         </div>
       </NavLink>
 

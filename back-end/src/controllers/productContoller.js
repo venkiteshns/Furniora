@@ -50,6 +50,7 @@ const getCartProducts = async (req, res) => {
 
 const handleEditProduct = async (req, res) => {
   try {
+    req.body.productId = req.params.id;
     let product = await editProduct(req.body);
     console.log(product);
     res.json({ ...product });
@@ -60,6 +61,7 @@ const handleEditProduct = async (req, res) => {
 
 const handleDeleteProduct = async (req, res) => {
   try {
+    req.body._id = req.params.id;
     let response = await deleteProduct(req.body);
     if(response?.acknowledged && response?.deletedCount === 1){
         return res.send(response)

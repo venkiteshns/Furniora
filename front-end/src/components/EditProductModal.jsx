@@ -141,6 +141,8 @@ const EditProductModal = ({ product, onClose }) => {
               <option value="Desks & Office Furniture">Desks & Office Furniture</option>
               <option value="Shelves & Bookcases">Shelves & Bookcases</option>
               <option value="Outdoor & Garden Furniture">Outdoor & Garden Furniture</option>
+              <option value="Others">Others</option>
+
             </select>
             {errors.category && (
               <p className="text-red-500 text-sm mt-1">

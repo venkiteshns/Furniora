@@ -22,23 +22,23 @@ router.post("/user/login", userLogin);
 
 router.post("/user/signup", userSignup);
 
-router.get("/user/logout", userLogout);
+router.post("/user/logout", userLogout);
 
 router.get("/user/products", getProducts);
 
 router.get("/user/products/:id", getUserProducts);
 
-router.post("/user/add_product", addProduct);
+router.post("/user/products", addProduct);
 
-router.post("/user/add_to_cart/:id", addToCart);
+router.post("/user/cart/:id", addToCart);
 
-router.post('/user/edit_product', handleEditProduct)
+router.put('/user/products/:id', handleEditProduct)
 
 router.get("/user/cart_products/:id",getCartProducts);
 
-router.post('/user/delete_product/', handleDeleteProduct)
+router.delete('/user/products/:id', handleDeleteProduct)
 
-router.get('/user/sold/:id', handleSoldProduct)
+router.patch('/user/products/:id/sold', handleSoldProduct)
 
 router.post('/user/checkout', handleCheckout)
 

@@ -135,7 +135,7 @@ const Dashboard = () => {
               Discover our premium range of modern furniture.
             </p>
           </div>
-          
+
           <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-4 py-2 shadow-sm">
             <select
               value={categoryFilter}
@@ -153,8 +153,9 @@ const Dashboard = () => {
               <option value="Desks & Office Furniture">Desks & Office Furniture</option>
               <option value="Shelves & Bookcases">Shelves & Bookcases</option>
               <option value="Outdoor & Garden Furniture">Outdoor & Garden Furniture</option>
+              <option value="Others">Others</option>
             </select>
-            
+
             <input
               type="number"
               placeholder="Max price"
