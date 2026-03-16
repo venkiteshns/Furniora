@@ -5,6 +5,8 @@ const api = axios.create({
     withCredentials: true
 });
 
+export default api;
+
 // // Request interceptor to add JWT token from localStorage/Redux to headers
 // api.interceptors.request.use(
 //     (config) => {
@@ -35,4 +37,3 @@ const api = axios.create({
 //     }
 // );
 
-export default api;

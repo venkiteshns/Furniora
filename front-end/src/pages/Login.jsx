@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {useForm} from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { handleLogin } from '../services/user'
 import '../styles/login.css'
 import { NavLink, useNavigate } from 'react-router-dom'
@@ -9,7 +9,7 @@ import { setCredentials } from '../store/authSlice'
 
 const Login = () => {
 
-  const {register, handleSubmit, formState:{errors}} = useForm()
+  const { register, handleSubmit, formState: { errors } } = useForm()
   const { userInfo } = useSelector((state) => state.auth);
   const dispatch = useDispatch()
   const [exist, setExist] = useState(null);
@@ -19,19 +19,18 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     const user = await handleLogin(data);
-    console.log(user);
-    if(!user.found){
+    if (!user.found) {
       setExist("Couldn't find an account with this email. Please try again!");
       return;
-    }else if(!user.isValid){
+    } else if (!user.isValid) {
       setExist("Password seems to be incorrect . Please try again!");
       return;
     }
     setExist(null)
-    if(!userInfo){
+    if (!userInfo) {
       dispatch(setCredentials({ ...user.user }));
     }
-    navigate('/',{ replace: true })
+    navigate('/', { replace: true })
   }
 
   return (
@@ -39,7 +38,7 @@ const Login = () => {
       <div className="login-card w-full max-w-md p-8 bg-white rounded-2xl border border-gray-100 relative overflow-hidden">
         {/* Decorative Top Accent */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gray-900"></div>
-        
+
         <div className="text-center mb-8 mt-2">
           <h1 className="text-2xl font-bold text-gray-900 mb-2 tracking-tight">Welcome Back</h1>
           <p className="text-sm text-gray-500">Sign in to your account to continue shopping</p>
@@ -53,7 +52,7 @@ const Login = () => {
             <input
               type="email"
               id="email"
-              {...register("email",{required:{value:true,message:"Email is required"}})}
+              {...register("email", { required: { value: true, message: "Email is required" } })}
               placeholder="you@example.com"
               className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 outline-none transition-all placeholder-gray-400 text-gray-900"
             />
@@ -70,7 +69,7 @@ const Login = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                {...register("password",{required:{value:true,message:"Password is required"}})}
+                {...register("password", { required: { value: true, message: "Password is required" } })}
                 placeholder="••••••••"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 outline-none transition-all placeholder-gray-400 text-gray-900 pr-10"
               />
@@ -101,7 +100,7 @@ const Login = () => {
         </div>
         <p className="mt-8 text-center text-sm text-gray-600">
           Don't have an account?{' '}
-           <NavLink to="/signup" className="font-medium text-gray-900 hover:text-gray-700 transition-colors">
+          <NavLink to="/signup" className="font-medium text-gray-900 hover:text-gray-700 transition-colors">
             Create an account
           </NavLink>
         </p>

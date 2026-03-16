@@ -13,9 +13,23 @@ const startServer = async () => {
     await dbConnect();
     app.listen(PORT, (err) => {
       if (err) {
-        return console.log("Server start error",err);
+        return console.log("Server start error", err);
       }
       console.log("Server running on port :", PORT);
+
+      // Cron setup for keep backend alive
+
+      cron.schedule('*/14 * * * *', async () => {
+        try {
+          // Replace with your actual Render URL
+          const renderUrl = 'https://the-royal-furnitures.onrender.com/ping';
+          await axios.get(renderUrl);
+          console.log('Self-ping successful: Server kept awake');
+        } catch (error) {
+          console.error('Self-ping failed:', error.message);
+        }
+      });
+
     });
   } catch (error) {
     console.log("Error while starting server", error);
