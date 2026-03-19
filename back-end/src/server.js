@@ -23,7 +23,6 @@ const startServer = async () => {
 
       cron.schedule('*/14 * * * *', async () => {
         try {
-          // Replace with your actual Render URL
           const renderUrl = 'https://the-royal-furnitures.onrender.com/ping';
           await axios.get(renderUrl);
           console.log('Self-ping successful: Server kept awake');
